@@ -1,17 +1,28 @@
 <?php
 include '../lib/db.php';
 
-if(isset($_POST['add_event'])){
-    $event_name = mysqli_real_escape_string($connection,$_POST['event_name']);
-    $event_descriptiion = mysqli_real_escape_string($connection,$_POST['event_description']);
-    $event_date = mysqli_real_escape_string($connection,$_POST['event_date']);
+if (isset($_POST['add_event'])) {
+    $event_name = mysqli_real_escape_string($connection, $_POST['event_name']);
+    $event_description = mysqli_real_escape_string($connection, $_POST['event_description']);
+    $event_date = mysqli_real_escape_string($connection, $_POST['event_date']);
 
-    $query = mysqli_query($connection,"INSERT INTO events(event_name,event_description,event_date)
+    $query = mysqli_query($connection, "INSERT INTO events(event_name,event_description,event_date)
                         VALUES ('$event_name','$event_description','$event_date')");
-    if($query){
+    if ($query) {
         $notif = '<div class="alert alert-success">Berhasil Tambah Data</div>';
-    }else{
+    } else {
         $notif = '<div class="alert alert-danger">Gagal Tambah Data</div>';
+    }
+}
+
+if (isset($_GET['delete'])) {
+    $id = $_GET['delete'];
+
+    $query = mysqli_query($connection, "DELETE FROM events WHERE id_event='$id'");
+    if ($query) {
+        $notifDelete = '<div class="alert alert-success">Berhasil Hapus Data</div>';
+    } else {
+        $notifDelete = '<div class="alert alert-danger">Gagal Hapus Data</div>';
     }
 }
 ?>
@@ -40,7 +51,13 @@ if(isset($_POST['add_event'])){
         <div class="row mt-3">
             <div class="col-md-7">
                 <div class="card border-0 shadow-lg">
-                    <?php echo isset($notif) ? $notif : ''; ?>
+                    <?php
+                    if (isset($notif)) {
+                        echo $notif;
+                    } else if(isset($notifDelete)){
+                        echo $notifDelete;
+                    }
+                    ?>
                     <div class="card-body">
                         <button class=" btn btn-primary " data-toggle="modal" data-target="#modalevents">Tambah Event</button>
                         <a href="../index.php" class="btn btn-dark">Lihat Website</a>
@@ -55,25 +72,25 @@ if(isset($_POST['add_event'])){
                             </thead>
                             <tbody>
                                 <?php
-                                $query = mysqli_query($connection,"SELECT * FROM events");
-                                while($data = mysqli_fetch_array($query)){
+                                $query = mysqli_query($connection, "SELECT * FROM events");
+                                while ($data = mysqli_fetch_array($query)) {
                                 ?>
-                                <tr>
-                                    <td><?php echo $data['event_name']?></td>
-                                    <td><?php echo $data['event_description']?></td>
-                                    <td><?php echo $data['event_date']?></td>
-                                    <td>
-                                        <div class="btn-group">
-                                            <button id="actionbtn" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-hashpopup="true" aria-expanded="false">
-                                                Action Button
-                                            </button>
-                                            <div class="dropdown-menu" aria-labelledby="actionbtn">
-                                                <a href="" class="dropdown-item">Edit</a>
-                                                <a href="" class="dropdown-item">Hapus</a>
+                                    <tr>
+                                        <td><?php echo $data['event_name'] ?></td>
+                                        <td><?php echo $data['event_description'] ?></td>
+                                        <td><?php echo $data['event_date'] ?></td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <button id="actionbtn" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-hashpopup="true" aria-expanded="false">
+                                                    Action Button
+                                                </button>
+                                                <div class="dropdown-menu" aria-labelledby="actionbtn">
+                                                    <a href="edit.php?edit=<?php echo $data['id_event'] ?>" class="dropdown-item">Edit</a>
+                                                    <a href="dashboard.php?delete=<?php echo $data['id_event'] ?>" class="dropdown-item">Hapus</a>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                </tr>
+                                        </td>
+                                    </tr>
                                 <?php } ?>
                             </tbody>
                         </table>
