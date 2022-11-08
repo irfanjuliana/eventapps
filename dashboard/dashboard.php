@@ -104,7 +104,12 @@ if (isset($_GET['delete'])) {
                             <h3>List User Event</h3>
                         </div>
                         <ul class="list-group">
-                            <li class="list-group-item"><span class="badge badge-primary">event</span> / user / email</li>
+                            <?php
+                            $query = mysqli_query($connection,"SELECT * FROM user_event INNER JOIN events ON events.id_event=user_event.id_event");
+                            while($data = mysqli_fetch_array($query)){
+                            ?>
+                            <li class="list-group-item"><span class="badge badge-primary"><?php echo $data['event_name'] ?></span> / <?php echo $data['fullname'] ?> / <?php echo $data['email'] ?></li>
+                        <?php } ?>
                         </ul>
                     </div>
                 </div>

@@ -1,3 +1,29 @@
+<?php
+include 'lib/db.php';
+
+if(isset($_GET['detail'])){
+    $id = $_GET['detail'];
+
+    $query = mysqli_query($connection,"SELECT * FROM events WHERE id_event='$id'");
+    $data = mysqli_fetch_array($query);
+
+    if(isset($_POST['daftar'])){
+        $fullname = mysqli_real_escape_string($connection,$_POST['fullname']);
+        $phone = mysqli_real_escape_string($connection,$_POST['phone']);
+        $email = mysqli_real_escape_string($connection,$_POST['email']);
+
+        $query = mysqli_query($connection,"INSERT INTO user_event (id_event,fullname,phone,email)
+        VALUES ('$id','$fullname','$phone','$email')");
+
+        if($query){
+            header('Location: index.php');
+        }
+    }
+}
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -39,13 +65,14 @@
                 <div class="card border-0 shadow-lg">
                     <div class="card-body">
                         <div class="card-title">
-                            <h3 class="text-center">Judul Event</h3>
+                            <h3 class="text-center"><?php echo $data['event_name'] ?></h3>
                         </div>  
                         <p class="card-text">
-                            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Commodi soluta ad fugit sint suscipit, autem possimus at et facilis fugiat.
+                        <?php echo $data['event_description'] ?>
                         </p>
+                        <span>Tanggal Event <?php echo $data['event_date'] ?></span>
                         <h3 class="text-center">Form Pendaftaran Event</h3>
-                        <form method="post">
+                        <form method="post" autocomplete="off">
                             <div class="form-group">
                                 <label>Nama Lengkap</label>
                                 <input type="text" class="form-control" name="fullname" required >
@@ -59,7 +86,7 @@
                                 <input type="email" class="form-control" name="email" required >
                             </div>
                             <div class="form-group">
-                                <button class="btn btn-primary btn-block" type="submit">Kirim</button>
+                                <button class="btn btn-primary btn-block" type="submit" name="daftar">Kirim</button>
                             </div>
                         </form>    
 
